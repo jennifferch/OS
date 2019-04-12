@@ -38,22 +38,24 @@ static void initHardware(void) {
 int main(void) {
    initHardware();
 
+   /* Start the os */
    os_start();
 
    while (1) {}
 }
 
-blinkTaskData_t task5_blink = { .delay = 100, .led = LED1 };
-blinkTaskData_t task6_blink = { .delay = 200, .led = LED2 };
+blinkTaskData_t task3_blink = { .delay = 250, .led = LED1 };
+blinkTaskData_t task5_blink = { .delay = 500, .led = LED2 };
+blinkTaskData_t task6_blink = { .delay = 100, .led = LED3 };
 
 #define USER_TASKS                                                           \
-       OS_INIT_TASK(task5, (uint32_t *)stack5, STACK_SIZE, &task5_blink)     \
-       OS_INIT_TASK(task6, (uint32_t *)stack6, STACK_SIZE, &task6_blink)            \
-       OS_INIT_TASK(task_button, (uint32_t *)stack_button, STACK_SIZE, 0)
+	   OS_INIT_TASK(task3, TASK_PRIORITY_LOW, (uint32_t *)stack3, STACK_SIZE, &task3_blink)     \
+       OS_INIT_TASK(task5, TASK_PRIORITY_HIGH, (uint32_t *)stack5, STACK_SIZE, &task5_blink)     \
+       OS_INIT_TASK(task6, TASK_PRIORITY_HIGH, (uint32_t *)stack6, STACK_SIZE, &task6_blink)
 
 taskControl_t tasks_list[] = {
 	  USER_TASKS
-	  LAST_OS_TASK
+	  LAST_TASK
 };
 
 

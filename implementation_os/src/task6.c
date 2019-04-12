@@ -8,7 +8,7 @@ void task6(void *config) {
 	blinkTaskData_t *myConfig = (blinkTaskData_t *) config;
 
 	while (1) {
-		set_delay_os(myConfig->delay);
 		gpioToggle(myConfig->led);
+		set_delay_os(myConfig->delay);
 	}
 }
