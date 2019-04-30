@@ -6,7 +6,7 @@
 
 /*==================[macros and definitions]=================================*/
 
-// Amount of priority levels
+/*Amount of priority levels*/
 #define OS_PRIORITY_LEVELS 4
 
 #define EXCHANGE_DELAY      6

@@ -2,6 +2,9 @@
 #include "os_events.h"
 #include "chip.h"
 
+extern osState_t osState;
+extern bool osSwitchRequired;
+
 /**
  * Initializes an event for it's future use.
  */
@@ -25,6 +28,11 @@ bool os_event_init(event_t *event) {
  * will be blocked until the event is sent.
  */
 bool os_event_wait(event_t *event) {
+
+	// Check if valid calling context
+	if (osState == OS_STATE_IRQ) {
+		return false;
+	}
 
 	/* Disable interrupts.*/
 	os_enter_critical();
@@ -66,6 +74,11 @@ bool os_event_set(event_t *event) {
 	/* Disable interrupts */
 	os_enter_critical();
 
+	if (osState == OS_STATE_IRQ) {
+		// Mark that a scheduler update is needed
+		osSwitchRequired = true;
+	}
+
 	/* Check if state of the event was pending */
 	if (event->state != EVENT_WAITING) {
 		/* Enable interrupts */
@@ -85,6 +98,12 @@ bool os_event_set(event_t *event) {
 
 	/* Enable interrupts */
 	os_exit_critical();
+
+	// Call switch context only if not calling from an IRQ
+	if (osState != OS_STATE_IRQ) {
+		// Call the scheduler for context switching
+		schedule();
+	}
 
 	return true;
 }

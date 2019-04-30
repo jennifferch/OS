@@ -33,6 +33,7 @@
 /***********************************************************************/
 typedef void (*task_t)(void *);
 typedef int32_t taskID_t;
+typedef uint32_t osTicks_t;
 
 typedef enum taskState_t {
 	TASK_STATE_ERROR,
@@ -73,7 +74,7 @@ typedef enum {
 typedef struct {
 	int32_t             currentTask;
 	int32_t             numTask;
-    uint32_t            tickCount;
+	osTicks_t            tickCount;
     taskControl_t       taskList[OS_MAX_TASK + 1];
     taskID_t            readyTaskList[OS_PRIORITY_LEVELS][OS_MAX_TASK+1];
     osState_t           state;
@@ -89,11 +90,14 @@ taskID_t get_current_task(void);
 
 osState_t get_state_os(void);
 
+osTicks_t get_systemTicks_os(void);
+
 void schedule(void);
 
 void os_enter_critical(void);
 
 void add_ready_task_os(taskID_t id);
+
 void os_exit_critical(void);
 
 #endif

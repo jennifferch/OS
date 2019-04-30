@@ -21,6 +21,10 @@ extern taskControl_t tasks_list[OS_MAX_TASK];
 
 static uint8_t idleStack[STACK_SIZE];
 
+osState_t osState = OS_STATE_TASK;
+
+bool osSwitchRequired;
+
 ///////////////////////////////////////////////////////////////////////////////
 // internal functions definition
 ///////////////////////////////////////////////////////////////////////////////
@@ -134,6 +138,12 @@ void os_start(void) {
  * and runs the scheduler
  */
 void set_delay_os(uint32_t milliseconds) {
+
+	  /* Check if valid calling context */
+	   if (osState == OS_STATE_IRQ) {
+	      return;
+	   }
+
 
 	os_enter_critical();
 	if (control_task_os.currentTask != OS_ACTUAL_TASK_NONE
@@ -338,6 +348,15 @@ static bool init_task(taskControl_t *task) {
 	task->stack[(task->stackSize / 4) - 9] = EXC_RETURN;
 
 	return true;
+}
+
+/**
+ *
+ * @return current system ticks
+ */
+osTicks_t get_systemTicks_os(void) {
+
+   return control_task_os.tickCount;
 }
 
 /**
